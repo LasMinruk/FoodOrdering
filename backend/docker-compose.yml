@@ -1,0 +1,99 @@
+# version: "3.8"
+
+services:
+  order-service:
+    build: ./order-service
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./order-service/.env
+    networks:
+      - microservices-network
+    depends_on:
+      - auth-service
+
+  payment-service:
+    build:
+      context: ./payment-service
+    ports:
+      - "5004:5004"
+    env_file:
+      - ./payment-service/.env
+    networks:
+      - microservices-network
+
+  restaurant-service:
+    build: ./restaurant-service
+    container_name: restaurant-service
+    ports:
+      - "5008:5008"
+    env_file:
+      - ./restaurant-service/.env
+    volumes:
+      - ./restaurant-service:/app
+      - /app/node_modules
+    working_dir: /app
+    restart: always
+    networks:
+      - microservices-network
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "5007:5007"
+    env_file:
+      - ./auth-service/.env
+    volumes:
+      - ./auth-service:/app
+      - /app/node_modules
+    working_dir: /app
+    restart: always
+    networks:
+      - microservices-network
+
+  delivery-service:
+    build: ./delivery-service
+    container_name: delivery-service
+    ports:
+      - "5010:5010"
+    env_file:
+      - ./delivery-service/.env
+    volumes:
+      - ./delivery-service:/app
+      - /app/node_modules
+    working_dir: /app
+    restart: always
+    networks:
+      - microservices-network
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "5003:5003"
+    env_file:
+      - ./notification-service/.env
+    volumes:
+      - ./notification-service:/app
+      - /app/node_modules
+    working_dir: /app
+    restart: always
+    networks:
+      - microservices-network
+
+  location-tracker:
+    build: ./location-tracker
+    container_name: location-tracker
+    ports:
+      - "5009:5009"
+    volumes:
+      - ./location-tracker:/app
+      - /app/node_modules
+    working_dir: /app
+    restart: always
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
